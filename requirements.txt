@@ -2,3 +2,6 @@
 Django>=6.0,<6.1
 gunicorn>=23.0.0
 whitenoise>=6.9.0
+# MySQL driver (pure-Python, no compiler needed) + .env loading.
+PyMySQL>=1.1.0
+python-dotenv>=1.0.0
