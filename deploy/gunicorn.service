@@ -1,0 +1,21 @@
+# Updated systemd unit for mysite.
+# Install on the server with:
+#   sudo cp deploy/gunicorn.service /etc/systemd/system/gunicorn.service
+#   sudo systemctl daemon-reload && sudo systemctl restart gunicorn
+#
+# The only change vs. the original is EnvironmentFile (loads /var/www/mysite/.env
+# so SECRET_KEY / DEBUG / ALLOWED_HOSTS come from env, not from settings.py).
+
+[Unit]
+Description=gunicorn for mysite
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/var/www/mysite
+EnvironmentFile=/var/www/mysite/.env
+ExecStart=/var/www/mysite/venv/bin/gunicorn --workers 2 --bind unix:/run/gunicorn-mysite.sock config.wsgi:application
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

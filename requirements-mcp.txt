@@ -1,0 +1,5 @@
+# Optional: only needed to run mcp_server.py (the FastMCP server).
+# Not required by the web app / gunicorn. Install with:
+#   pip install -r requirements-mcp.txt
+requests>=2.31.0
+mcp>=1.0.0
