@@ -1,0 +1,95 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | mysite admin{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}">my<span class="brand-accent">site</span> <span class="brand-sub">admin</span></a>
+</div>
+{% if user.is_anonymous %}
+  {% include "admin/color_theme_toggle.html" %}
+{% endif %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  /* ============================================================
+     mysite — teal admin theme
+     Overrides Django admin CSS variables so the whole admin
+     (dashboard, changelists, forms) matches the teal login page.
+     Selectors include [data-theme] so it holds in light AND dark.
+     ============================================================ */
+  :root,
+  html[data-theme="light"],
+  html[data-theme="dark"] {
+    --primary: #0891b2;              /* teal — module headers, highlights */
+    --secondary: #0e7490;            /* darker teal */
+    --accent: #22d3ee;               /* bright cyan accent */
+    --header-bg: #0e7490;            /* top header bar */
+    --header-color: #cffafe;
+    --header-branding-color: #ffffff;
+    --header-link-color: #ffffff;
+    --link-selected-fg: #0891b2;
+    --breadcrumbs-bg: #155e75;
+    --breadcrumbs-fg: #cffafe;
+    --breadcrumbs-link-fg: #ffffff;
+    --button-bg: #0891b2;
+    --button-fg: #ffffff;
+    --button-hover-bg: #0e7490;
+    --default-button-bg: #0e7490;
+    --default-button-hover-bg: #155e75;
+    --object-tools-bg: #0891b2;
+    --object-tools-hover-bg: #0e7490;
+  }
+  /* Body-text links: darker teal reads well on the light background */
+  :root,
+  html[data-theme="light"] {
+    --link-fg: #0e7490;
+    --link-hover-color: #155e75;
+  }
+  /* On a dark background a brighter teal keeps contrast accessible */
+  @media (prefers-color-scheme: dark) {
+    :root { --link-fg: #22d3ee; --link-hover-color: #67e8f9; }
+  }
+  html[data-theme="dark"] {
+    --link-fg: #22d3ee;
+    --link-hover-color: #67e8f9;
+  }
+
+  /* ---- Branding ---- */
+  #site-name a { font-weight: 700; letter-spacing: -.01em; }
+  #site-name .brand-accent { color: #a5f3fc; }
+  #site-name .brand-sub { font-weight: 400; opacity: .85; }
+  #header { padding: 14px 40px; }
+
+  /* ---- Card-style modules (dashboard boxes, recent actions, changelists) ---- */
+  .module {
+    border: 1px solid var(--hairline-color);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+  }
+  .dashboard .app-list .module { margin-bottom: 1.25rem; }
+
+  /* ---- Rounder buttons to echo the login page ---- */
+  .button, input[type=submit], input[type=button],
+  .submit-row input, a.button, .object-tools a {
+    border-radius: 8px;
+  }
+
+  /* ---- Dashboard welcome hero (rendered by index.html) ---- */
+  .mysite-hero {
+    background: linear-gradient(135deg, #0891b2, #0e7490);
+    color: #fff;
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 4px 14px rgba(8, 145, 178, .25);
+  }
+  .mysite-hero h1 { margin: 0 0 .35rem; font-size: 1.4rem; color: #fff; }
+  .mysite-hero p { margin: 0; opacity: .9; font-size: .95rem; }
+</style>
+{% endblock %}
