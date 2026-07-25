@@ -105,14 +105,43 @@ automatically. Watch runs under the repo's **Actions** tab.
 - `db.sqlite3` and `venv/` are git-ignored; the server keeps its own copies.
 - To deploy manually at any time, SSH in and run `bash scripts/deploy.sh`.
 
+## Database (MySQL — shared by local and live)
+
+The app uses **MySQL** on the VPS. Both the live site and local dev talk to the
+**same** database, so the config is env-driven ([config/settings.py](config/settings.py)):
+
+- `DJANGO_DB_ENGINE=mysql` switches from the SQLite fallback to MySQL.
+- Connection comes from `DJANGO_DB_NAME/USER/PASSWORD/HOST/PORT`.
+- Driver is **PyMySQL** (pure-Python; installs with no compiler on Windows/Linux).
+
+**Live** (`/var/www/mysite/.env`): connects on the VPS loopback —
+`DJANGO_DB_HOST=127.0.0.1`, `DJANGO_DB_PORT=3306`.
+
+**Local**: MySQL stays private on the VPS (bound to `127.0.0.1`, never exposed).
+Reach it through an SSH tunnel:
+
+```powershell
+# Terminal 1 — open the tunnel (local 3307 -> VPS 127.0.0.1:3306). Keep it open.
+powershell -ExecutionPolicy Bypass -File scripts\db-tunnel.ps1
+
+# Terminal 2 — run the app (reads .env: DJANGO_DB_HOST=127.0.0.1, PORT=3307)
+venv\Scripts\python manage.py runserver
+```
+
+> ⚠️ It's the **same** database — migrations or edits you make locally change
+> **live production data** immediately. There is no separate dev copy.
+
+The pre-MySQL `db.sqlite3` is kept on the server as a backup. To roll back,
+remove the `DJANGO_DB_*` lines from `.env` and restart gunicorn.
+
 ## Local development
 
-```bash
+```powershell
 cd c:\vps\mysite
 python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env        # then edit: set DJANGO_DEBUG=True
-python manage.py migrate
-python manage.py runserver
+venv\Scripts\pip install -r requirements.txt
+# Create a local .env (git-ignored): DJANGO_DEBUG=True + the DJANGO_DB_* vars
+# pointing at 127.0.0.1:3307 (see "Database" above).
+powershell -ExecutionPolicy Bypass -File scripts\db-tunnel.ps1   # keep open
+venv\Scripts\python manage.py runserver                          # in another terminal
 ```
