@@ -128,8 +128,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+# STATIC_URL is env-driven so the app can live under a URL sub-path in
+# production. On the VPS the app is served under /mysite/ (nginx sets
+# SCRIPT_NAME=/mysite), so the browser must request assets at
+# /mysite/static/... -- set DJANGO_STATIC_URL=/mysite/static/ there.
+# Locally the app runs at the site root, so the default /static/ is correct.
+STATIC_URL = os.environ.get('DJANGO_STATIC_URL', 'static/')
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise serves files under the path part of STATIC_URL by default. When
+# STATIC_URL carries the /mysite/ prefix but nginx has already stripped
+# SCRIPT_NAME, WhiteNoise still sees /static/..., so point it there explicitly
+# (set DJANGO_WHITENOISE_STATIC_PREFIX=/static/ on the server).
+if os.environ.get('DJANGO_WHITENOISE_STATIC_PREFIX'):
+    WHITENOISE_STATIC_PREFIX = os.environ['DJANGO_WHITENOISE_STATIC_PREFIX']
 
 STORAGES = {
     'default': {
