@@ -56,7 +56,49 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third-party
+    'rest_framework',
+    'rest_framework.authtoken',
+    'drf_spectacular',
+    # Local
+    'api',
 ]
+
+# Django REST Framework: reuse the session login that already guards /admin/,
+# so being logged in to the dashboard authenticates same-origin API calls too.
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # Session auth powers the browsable API + dashboard (same login as /admin/).
+        'rest_framework.authentication.SessionAuthentication',
+        # Token auth is for API clients like Postman/curl/mobile. Both header
+        # styles work:  Authorization: Token <key>   or   Bearer <key>
+        'rest_framework.authentication.TokenAuthentication',
+        'api.authentication.BearerTokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    # drf-spectacular generates the OpenAPI schema that powers /api/docs/.
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# OpenAPI / Swagger documentation (drf-spectacular).
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'HMS API',
+    'DESCRIPTION': (
+        'REST API for the House Management System — properties, tenants, rent '
+        'payments and contact messages.\n\n'
+        '**Authentication:** POST your username + password to '
+        '`/api/auth/login/` to get an API token, then send it in the '
+        '`Authorization` header as either `Token <key>` or `Bearer <key>`. '
+        '(You can also mint a token with `python manage.py drf_create_token '
+        '<username>`, and browser sessions from the /admin/ login are accepted.)'
+    ),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,  # don't expose the raw schema on the Swagger page
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -72,6 +114,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+# The dashboard at /admin/ is @login_required; send anonymous users to the
+# built-in admin login (now mounted at /django-admin/login/). Using the URL
+# name means the reverse respects any sub-path prefix in production.
+LOGIN_URL = 'admin:login'
 
 TEMPLATES = [
     {
@@ -165,6 +212,11 @@ USE_TZ = True
 # Locally the app runs at the site root, so the default /static/ is correct.
 STATIC_URL = os.environ.get('DJANGO_STATIC_URL', 'static/')
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Project-level static assets (the vendored NiceAdmin dashboard template lives
+# here). collectstatic gathers these into STATIC_ROOT for WhiteNoise to serve in
+# production; the runserver dev server picks them up directly via the finders.
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # WhiteNoise serves files under the path part of STATIC_URL by default. When
 # STATIC_URL carries the /mysite/ prefix but nginx has already stripped

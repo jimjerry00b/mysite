@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="pagetitle">
+  <h1>Dashboard</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
+
+<section class="section dashboard">
+  <div class="row">
+
+    <!-- Left side columns -->
+    <div class="col-lg-8">
+      <div class="row">
+
+        <!-- Sales Card -->
+        <div class="col-xxl-4 col-md-6">
+          <div class="card info-card sales-card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start"><h6>Filter</h6></li>
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Properties <span>| Total</span></h5>
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-house-door"></i>
+                </div>
+                <div class="ps-3">
+                  <h6 id="stat-properties">—</h6>
+                  <span class="text-muted small pt-2 ps-1">managed units</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- End Sales Card -->
+
+        <!-- Revenue Card -->
+        <div class="col-xxl-4 col-md-6">
+          <div class="card info-card revenue-card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start"><h6>Filter</h6></li>
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Monthly Rent <span>| Occupied</span></h5>
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-currency-dollar"></i>
+                </div>
+                <div class="ps-3">
+                  <h6 id="stat-revenue">—</h6>
+                  <span class="text-muted small pt-2 ps-1">from occupied units</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- End Revenue Card -->
+
+        <!-- Customers Card -->
+        <div class="col-xxl-4 col-xl-12">
+          <div class="card info-card customers-card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start"><h6>Filter</h6></li>
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Tenants <span>| Active</span></h5>
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-people"></i>
+                </div>
+                <div class="ps-3">
+                  <h6 id="stat-tenants">—</h6>
+                  <span class="text-muted small pt-2 ps-1">with leases</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- End Customers Card -->
+
+        <!-- Reports -->
+        <div class="col-12">
+          <div class="card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start"><h6>Filter</h6></li>
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Reports <span>/Today</span></h5>
+              <!-- Line Chart -->
+              <div id="reportsChart"></div>
+              <!-- End Line Chart -->
+            </div>
+          </div>
+        </div><!-- End Reports -->
+
+        <!-- Recent Sales -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start"><h6>Filter</h6></li>
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Recent Payments <span>| Latest</span></h5>
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Tenant</th>
+                    <th scope="col">Property</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-payments-body">
+                  <tr><td colspan="5" class="text-center text-muted">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- End Recent Payments -->
+
+      </div>
+    </div><!-- End Left side columns -->
+
+    <!-- Right side columns -->
+    <div class="col-lg-4">
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="filter">
+          <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+            <li class="dropdown-header text-start"><h6>Filter</h6></li>
+            <li><a class="dropdown-item" href="#">Today</a></li>
+            <li><a class="dropdown-item" href="#">This Month</a></li>
+            <li><a class="dropdown-item" href="#">This Year</a></li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+          <div class="activity" id="recent-activity">
+            <p class="text-muted">Loading…</p>
+          </div>
+        </div>
+      </div><!-- End Recent Activity -->
+
+      <!-- Budget Report -->
+      <div class="card">
+        <div class="filter">
+          <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+            <li class="dropdown-header text-start"><h6>Filter</h6></li>
+            <li><a class="dropdown-item" href="#">Today</a></li>
+            <li><a class="dropdown-item" href="#">This Month</a></li>
+            <li><a class="dropdown-item" href="#">This Year</a></li>
+          </ul>
+        </div>
+        <div class="card-body pb-0">
+          <h5 class="card-title">Budget Report <span>| This Month</span></h5>
+          <div id="budgetChart" style="min-height: 400px;" class="echart"></div>
+        </div>
+      </div><!-- End Budget Report -->
+
+      <!-- Website Traffic -->
+      <div class="card">
+        <div class="filter">
+          <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+            <li class="dropdown-header text-start"><h6>Filter</h6></li>
+            <li><a class="dropdown-item" href="#">Today</a></li>
+            <li><a class="dropdown-item" href="#">This Month</a></li>
+            <li><a class="dropdown-item" href="#">This Year</a></li>
+          </ul>
+        </div>
+        <div class="card-body pb-0">
+          <h5 class="card-title">Website Traffic <span>| Today</span></h5>
+          <div id="trafficChart" style="min-height: 400px;" class="echart"></div>
+        </div>
+      </div><!-- End Website Traffic -->
+
+    </div><!-- End Right side columns -->
+
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    // Reports Line Chart (ApexCharts)
+    new ApexCharts(document.querySelector("#reportsChart"), {
+      series: [{
+        name: 'Sales',
+        data: [31, 40, 28, 51, 42, 82, 56],
+      }, {
+        name: 'Revenue',
+        data: [11, 32, 45, 32, 34, 52, 41]
+      }, {
+        name: 'Customers',
+        data: [15, 11, 32, 18, 9, 24, 11]
+      }],
+      chart: { height: 350, type: 'area', toolbar: { show: false } },
+      markers: { size: 4 },
+      colors: ['#4154f1', '#2eca6a', '#ff771d'],
+      fill: {
+        type: "gradient",
+        gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.4, stops: [0, 90, 100] }
+      },
+      dataLabels: { enabled: false },
+      stroke: { curve: 'smooth', width: 2 },
+      xaxis: {
+        type: 'datetime',
+        categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
+      },
+      tooltip: { x: { format: 'dd/MM/yy HH:mm' } }
+    }).render();
+
+    // Budget Report Radar Chart (ECharts)
+    echarts.init(document.querySelector("#budgetChart")).setOption({
+      legend: { data: ['Allocated Budget', 'Actual Spending'] },
+      radar: {
+        indicator: [
+          { name: 'Sales', max: 6500 },
+          { name: 'Administration', max: 16000 },
+          { name: 'Information Technology', max: 30000 },
+          { name: 'Customer Support', max: 38000 },
+          { name: 'Development', max: 52000 },
+          { name: 'Marketing', max: 25000 }
+        ]
+      },
+      series: [{
+        name: 'Budget vs spending',
+        type: 'radar',
+        data: [
+          { value: [4200, 3000, 20000, 35000, 50000, 18000], name: 'Allocated Budget' },
+          { value: [5000, 14000, 28000, 26000, 42000, 21000], name: 'Actual Spending' }
+        ]
+      }]
+    });
+
+    // Website Traffic Pie Chart (ECharts)
+    echarts.init(document.querySelector("#trafficChart")).setOption({
+      tooltip: { trigger: 'item' },
+      legend: { top: '5%', left: 'center' },
+      series: [{
+        name: 'Access From',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        label: { show: false, position: 'center' },
+        emphasis: { label: { show: true, fontSize: '18', fontWeight: 'bold' } },
+        labelLine: { show: false },
+        data: [
+          { value: 1048, name: 'Search Engine' },
+          { value: 735, name: 'Direct' },
+          { value: 580, name: 'Email' },
+          { value: 484, name: 'Union Ads' },
+          { value: 300, name: 'Video Ads' }
+        ]
+      }]
+    });
+
+    // --- Live data from the REST API (session-authenticated, same-origin) ---
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const cap = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+    const money = (v) => '$' + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    const badgeClass = { paid: 'bg-success', pending: 'bg-warning', overdue: 'bg-danger' };
+    const dotClass = ['text-success', 'text-danger', 'text-primary', 'text-info', 'text-warning'];
+
+    fetch("{% url 'dashboard-summary' %}", { headers: { 'Accept': 'application/json' } })
+      .then(r => r.ok ? r.json() : Promise.reject('HTTP ' + r.status))
+      .then(d => {
+        // Stat cards
+        setText('stat-properties', d.properties_total);
+        setText('stat-revenue', money(d.monthly_revenue));
+        setText('stat-tenants', d.tenants_active);
+
+        // Recent Payments table
+        const pbody = document.getElementById('recent-payments-body');
+        pbody.innerHTML = (d.recent_payments || []).map(p => `
+          <tr>
+            <th scope="row"><a href="#">#${p.id}</a></th>
+            <td>${esc(p.tenant_name)}</td>
+            <td>${esc(p.property_name)}</td>
+            <td>${money(p.amount)}</td>
+            <td><span class="badge ${badgeClass[p.status] || 'bg-secondary'}">${esc(cap(p.status))}</span></td>
+          </tr>`).join('') ||
+          '<tr><td colspan="5" class="text-center text-muted">No payments yet.</td></tr>';
+
+        // Recent Activity feed
+        const abox = document.getElementById('recent-activity');
+        abox.innerHTML = (d.recent_activity || []).map((a, i) => `
+          <div class="activity-item d-flex">
+            <div class="activite-label">${esc(a.ago)}</div>
+            <i class="bi bi-circle-fill activity-badge ${dotClass[i % dotClass.length]} align-self-start"></i>
+            <div class="activity-content">
+              <a href="#" class="fw-bold text-dark">${esc(a.name)}</a> — ${esc(a.subject)}
+            </div>
+          </div>`).join('') ||
+          '<p class="text-muted">No recent activity.</p>';
+      })
+      .catch(err => {
+        console.warn('dashboard summary failed:', err);
+        const pbody = document.getElementById('recent-payments-body');
+        if (pbody) pbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Could not load data.</td></tr>';
+      });
+
+  });
+</script>
+{% endblock %}
