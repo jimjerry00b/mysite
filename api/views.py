@@ -29,6 +29,16 @@ def dashboard(request):
     return render(request, 'dashboard.html', {'active_page': 'dashboard'})
 
 
+@login_required
+def api_docs(request):
+    """Render the interactive API reference (Swagger UI) inside the dashboard
+    chrome, so it's reachable from the sidebar rather than only at the bare
+    /api/docs/ page. Swagger UI is loaded client-side and points at the OpenAPI
+    schema served by drf-spectacular at /api/schema/. The standalone /api/docs/
+    and /api/redoc/ pages remain available for external API clients."""
+    return render(request, 'api_docs.html', {'active_page': 'api-docs'})
+
+
 # --- Login: exchange username + password for an API token --------------------
 
 class LoginView(ObtainAuthToken):

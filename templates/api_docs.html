@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation{% endblock %}
+
+{% block content %}
+<div class="pagetitle">
+  <h1>API Documentation</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item active">API Documentation</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-4 pb-1">
+        <h5 class="card-title mb-0">HMS REST API <span>| Interactive reference</span></h5>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Other documentation formats">
+          <a class="btn btn-outline-primary" href="{% url 'redoc' %}" target="_blank" rel="noopener">
+            <i class="bi bi-book"></i> ReDoc
+          </a>
+          <a class="btn btn-outline-secondary" href="{% url 'schema' %}" target="_blank" rel="noopener">
+            <i class="bi bi-filetype-json"></i> OpenAPI schema
+          </a>
+        </div>
+      </div>
+      <p class="text-muted small mb-3">
+        Explore and try every endpoint below. Click <strong>Authorize</strong> and paste an API token
+        (get one from <code>POST /api/auth/login/</code>); same-origin “Try it out” calls also reuse
+        your dashboard session.
+      </p>
+      <!-- Swagger UI renders its interactive reference into this element. -->
+      <div id="swagger-ui"></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{# Swagger UI assets (loaded from CDN, mirroring drf-spectacular's own /api/docs/ page). #}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui.css">
+<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+<script>
+  window.addEventListener('load', () => {
+    const csrftoken = (document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/) || [])[1] || '';
+    SwaggerUIBundle({
+      url: "{% url 'schema' %}",              // OpenAPI schema served by drf-spectacular
+      dom_id: '#swagger-ui',
+      presets: [SwaggerUIBundle.presets.apis],
+      layout: 'BaseLayout',                   // no top URL bar — we embed inside the dashboard
+      deepLinking: true,
+      persistAuthorization: true,
+      // Send the CSRF token so session-authenticated "Try it out" calls
+      // (same login as the dashboard) pass Django's CSRF check.
+      requestInterceptor: (req) => {
+        if (csrftoken) req.headers['X-CSRFToken'] = csrftoken;
+        return req;
+      },
+    });
+  });
+</script>
+{% endblock %}
